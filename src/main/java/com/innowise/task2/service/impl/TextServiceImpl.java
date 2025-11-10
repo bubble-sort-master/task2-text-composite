@@ -10,51 +10,60 @@ import java.util.stream.Collectors;
 
 public class TextServiceImpl implements TextService {
 
-    @Override
-    public int findMaxSentencesWithSameWords(TextComponent text) {
-        Map<Set<String>, Integer> wordSetFrequency = new HashMap<>();
+  @Override
+  public int findMaxSentencesContainingSameWord(TextComponent text) {
+    Map<String, Set<Integer>> wordToSentenceIds = new HashMap<>();
+    int sentenceId = 0;
 
-        for (TextComponent paragraph : text.getChildren()) {
-            for (TextComponent sentence : paragraph.getChildren()) {
-                Set<String> words = sentence.getChildren().stream()
-                        .flatMap(lexeme -> lexeme.getChildren().stream())
-                        .filter(component -> component.getType() == ComponentType.WORD)
-                        .map(component -> component.restore().toLowerCase())
-                        .collect(Collectors.toSet());
+    for (TextComponent paragraph : text.getChildren()) {
+      for (TextComponent sentence : paragraph.getChildren()) {
+        Set<String> wordsInSentence = sentence.getChildren().stream()
+                .flatMap(lexeme -> lexeme.getChildren().stream())
+                .filter(component -> component.getType() == ComponentType.WORD)
+                .map(component -> component.restore().toLowerCase())
+                .collect(Collectors.toSet());
 
-                wordSetFrequency.merge(words, 1, Integer::sum);
-            }
+        for (String word : wordsInSentence) {
+          wordToSentenceIds
+                  .computeIfAbsent(word, k -> new HashSet<>())
+                  .add(sentenceId);
         }
 
-        return wordSetFrequency.values().stream()
-                .max(Integer::compareTo)
-                .orElse(0);
+        sentenceId++;
+      }
     }
 
-    @Override
-    public List<String> sortSentencesByLexemeCount(TextComponent text) {
-        List<TextComponent> sentences = new ArrayList<>();
+    return wordToSentenceIds.values().stream()
+            .mapToInt(Set::size)
+            .max()
+            .orElse(0);
+  }
 
-        for (TextComponent paragraph : text.getChildren()) {
-            sentences.addAll(paragraph.getChildren());
+
+  @Override
+  public List<String> sortSentencesByLexemeCount(TextComponent text) {
+    List<TextComponent> sentences = new ArrayList<>();
+
+    for (TextComponent paragraph : text.getChildren()) {
+      sentences.addAll(paragraph.getChildren());
+    }
+
+    return sentences.stream()
+            .sorted(Comparator.comparingInt(s -> s.getChildren().size()))
+            .map(TextComponent::restore)
+            .collect(Collectors.toList());
+  }
+
+  @Override
+  public TextComponent swapFirstAndLastLexeme(TextComponent text) {
+    for (TextComponent paragraph : text.getChildren()) {
+      for (TextComponent sentence : paragraph.getChildren()) {
+        List<TextComponent> lexemes = sentence.getChildren();
+        if (lexemes.size() >= 2) {
+          Collections.swap(lexemes, 0, lexemes.size() - 1);
         }
-
-        return sentences.stream()
-                .sorted(Comparator.comparingInt(s -> s.getChildren().size()))
-                .map(TextComponent::restore)
-                .collect(Collectors.toList());
+      }
     }
-
-    @Override
-    public TextComponent swapFirstAndLastLexeme(TextComponent text) {
-        for (TextComponent paragraph : text.getChildren()) {
-            for (TextComponent sentence : paragraph.getChildren()) {
-                List<TextComponent> lexemes = sentence.getChildren();
-                if (lexemes.size() >= 2) {
-                    Collections.swap(lexemes, 0, lexemes.size() - 1);
-                }
-            }
-        }
-        return text;
-    }
+    return text;
+  }
 }

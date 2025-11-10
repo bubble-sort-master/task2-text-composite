@@ -26,8 +26,23 @@ public class TextComposite implements TextComponent {
 
     @Override
     public String restore() {
-        return " ";
+        StringBuilder builder = new StringBuilder();
+
+        for (TextComponent component : children) {
+            builder.append(component.restore());
+
+            switch (component.getType()) {
+                case PARAGRAPH -> builder.append("\n");
+                case SENTENCE -> builder.append(" ");
+                case LEXEME -> builder.append(" ");
+                default -> {
+                }
+            }
+        }
+
+        return builder.toString().stripTrailing();
     }
+
 
     @Override
     public ComponentType getType() { return type; }

@@ -1,4 +1,4 @@
-package com.innowise.task2.entity.exception;
+package com.innowise.task2.exception;
 
 public class TextException extends Exception {
     public TextException() {

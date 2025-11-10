@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface TextService {
 
-    int findMaxSentencesWithSameWords(TextComponent text);
+    int findMaxSentencesContainingSameWord(TextComponent text);
 
     List<String> sortSentencesByLexemeCount(TextComponent text);
 

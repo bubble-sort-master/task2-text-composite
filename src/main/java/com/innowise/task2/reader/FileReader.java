@@ -1,5 +1,7 @@
 package com.innowise.task2.reader;
 
+import com.innowise.task2.exception.TextException;
+
 public interface FileReader {
-    String readTextFromFile(String filePath);
+    String readTextFromFile(String filePath) throws TextException;
 }
