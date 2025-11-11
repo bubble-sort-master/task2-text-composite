@@ -1,13 +1,14 @@
-package com.innowise.task2.reader;
+package com.innowise.task2.reader.impl;
 
 import com.innowise.task2.exception.TextException;
+import com.innowise.task2.reader.CustomFileReader;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class FileReaderImpl implements FileReader {
+public class CustomFileReaderImpl implements CustomFileReader {
 
     @Override
     public String readTextFromFile(String filePath) throws TextException {

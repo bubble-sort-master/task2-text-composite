@@ -22,7 +22,7 @@ public class TextComposite implements TextComponent {
     public void remove(TextComponent component) { children.remove(component); }
 
     @Override
-    public List<TextComponent> getChildren() { return Collections.unmodifiableList(children); }
+    public List<TextComponent> getChildren() { return new ArrayList<>(children); }
 
     @Override
     public String restore() {

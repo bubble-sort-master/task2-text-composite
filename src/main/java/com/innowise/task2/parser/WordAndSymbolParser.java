@@ -18,7 +18,7 @@ public class WordAndSymbolParser extends AbstractTextParser {
 
     @Override
     public TextComponent parse(String data) {
-        TextComposite lexemeComposite = new TextComposite(ComponentType.LEXEME);
+        TextComponent lexemeComposite = new TextComposite(ComponentType.LEXEME);
 
         for (String part : data.split(SPLIT_REGEX)) {
             if (part.isBlank()) continue;

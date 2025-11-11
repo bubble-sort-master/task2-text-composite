@@ -56,14 +56,35 @@ public class TextServiceImpl implements TextService {
 
   @Override
   public TextComponent swapFirstAndLastLexeme(TextComponent text) {
+    TextComposite newText = new TextComposite(ComponentType.TEXT);
+
     for (TextComponent paragraph : text.getChildren()) {
+      TextComposite newParagraph = new TextComposite(ComponentType.PARAGRAPH);
+
       for (TextComponent sentence : paragraph.getChildren()) {
         List<TextComponent> lexemes = sentence.getChildren();
+        TextComposite newSentence = new TextComposite(ComponentType.SENTENCE);
+
         if (lexemes.size() >= 2) {
-          Collections.swap(lexemes, 0, lexemes.size() - 1);
+          newSentence.add(lexemes.get(lexemes.size() - 1)); // last
+          for (int i = 1; i < lexemes.size() - 1; i++) {
+            newSentence.add(lexemes.get(i)); // middle
+          }
+          newSentence.add(lexemes.get(0)); // first
+        } else {
+          lexemes.forEach(newSentence::add); // copy as-is
         }
+
+        newParagraph.add(newSentence);
       }
+
+      newText.add(newParagraph);
     }
-    return text;
+
+    return newText;
   }
+
+
+
+
 }
