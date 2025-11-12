@@ -14,13 +14,7 @@ public class TextParserTest {
                 Hello, world!
                 This is a test.
                 """;
-        AbstractTextParser parserChain = new ParagraphParser(
-                new SentenceParser(
-                        new LexemeParser(
-                                new WordAndSymbolParser()
-                        )
-                )
-        );
+        AbstractTextParser parserChain = buildParserChain();
         String expected = "Hello, world!\nThis is a test.";
 
         // when
@@ -35,13 +29,7 @@ public class TextParserTest {
     public void testParseAndRestoreWithMultipleSpacesAndNewlines() {
         // given
         String input = "  Hello,   world!  \n\n  Another   line. ";
-        AbstractTextParser parserChain = new ParagraphParser(
-                new SentenceParser(
-                        new LexemeParser(
-                                new WordAndSymbolParser()
-                        )
-                )
-        );
+        AbstractTextParser parserChain = buildParserChain();
         String expected = "Hello, world!\nAnother line.";
 
         // when
@@ -56,13 +44,7 @@ public class TextParserTest {
     public void testRestorePreservesPunctuation() {
         // given
         String input = "Wow! Really? Yes.";
-        AbstractTextParser parserChain = new ParagraphParser(
-                new SentenceParser(
-                        new LexemeParser(
-                                new WordAndSymbolParser()
-                        )
-                )
-        );
+        AbstractTextParser parserChain = buildParserChain();
         String expected = "Wow! Really? Yes.";
 
         // when
@@ -71,5 +53,18 @@ public class TextParserTest {
 
         // then
         assertEquals(expected, actualRestored);
+    }
+
+    private AbstractTextParser buildParserChain() {
+        ParagraphParser paragraphParser = new ParagraphParser();
+        SentenceParser sentenceParser = new SentenceParser();
+        LexemeParser lexemeParser = new LexemeParser();
+        WordAndSymbolParser wordAndSymbolParser = new WordAndSymbolParser();
+
+        paragraphParser.setNext(sentenceParser);
+        sentenceParser.setNext(lexemeParser);
+        lexemeParser.setNext(wordAndSymbolParser);
+
+        return paragraphParser;
     }
 }

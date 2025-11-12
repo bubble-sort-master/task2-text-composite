@@ -66,13 +66,13 @@ public class TextServiceImpl implements TextService {
         TextComposite newSentence = new TextComposite(ComponentType.SENTENCE);
 
         if (lexemes.size() >= 2) {
-          newSentence.add(lexemes.get(lexemes.size() - 1)); // last
+          newSentence.add(lexemes.get(lexemes.size() - 1));
           for (int i = 1; i < lexemes.size() - 1; i++) {
-            newSentence.add(lexemes.get(i)); // middle
+            newSentence.add(lexemes.get(i));
           }
-          newSentence.add(lexemes.get(0)); // first
+          newSentence.add(lexemes.get(0));
         } else {
-          lexemes.forEach(newSentence::add); // copy as-is
+          lexemes.forEach(newSentence::add);
         }
 
         newParagraph.add(newSentence);

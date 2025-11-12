@@ -18,108 +18,47 @@ public class TextServiceImplTest {
   @Test
   public void testFindMaxSentencesContainingSameWord() {
     // given
-    TextComposite text = new TextComposite(ComponentType.TEXT);
-    TextComposite paragraph = new TextComposite(ComponentType.PARAGRAPH);
+    TextComponent sentence1 = createSentence("Hello", "world");
+    TextComponent sentence2 = createSentence("world", "privet");
+    TextComponent sentence3 = createSentence("unique");
 
-    TextComposite sentence1 = new TextComposite(ComponentType.SENTENCE);
-    sentence1.add(new TextComposite(ComponentType.LEXEME) {{
-      add(new TextLeaf("Hello", ComponentType.WORD));
-    }});
-    sentence1.add(new TextComposite(ComponentType.LEXEME) {{
-      add(new TextLeaf("world", ComponentType.WORD));
-    }});
+    TextComponent paragraph = createComposite(ComponentType.PARAGRAPH, sentence1, sentence2, sentence3);
+    TextComponent text = createComposite(ComponentType.TEXT, paragraph);
 
-    TextComposite sentence2 = new TextComposite(ComponentType.SENTENCE);
-    sentence2.add(new TextComposite(ComponentType.LEXEME) {{
-      add(new TextLeaf("world", ComponentType.WORD));
-    }});
-    sentence2.add(new TextComposite(ComponentType.LEXEME) {{
-      add(new TextLeaf("privet", ComponentType.WORD));
-    }});
-
-    TextComposite sentence3 = new TextComposite(ComponentType.SENTENCE);
-    sentence3.add(new TextComposite(ComponentType.LEXEME) {{
-      add(new TextLeaf("unique", ComponentType.WORD));
-    }});
-
-    paragraph.add(sentence1);
-    paragraph.add(sentence2);
-    paragraph.add(sentence3);
-    text.add(paragraph);
+    int expected = 2;
 
     // when
     int actual = service.findMaxSentencesContainingSameWord(text);
 
     // then
-    int expected = 2;
     assertEquals(expected, actual);
   }
 
   @Test
   public void testSortSentencesByLexemeCount() {
     // given
-    TextComposite text = new TextComposite(ComponentType.TEXT);
-    TextComposite paragraph = new TextComposite(ComponentType.PARAGRAPH);
+    TextComponent sentence1 = createSentence("One");
+    TextComponent sentence2 = createSentence("Two", "words");
+    TextComponent sentence3 = createSentence("Three", "lexemes", "here");
 
-    TextComposite sentence1 = new TextComposite(ComponentType.SENTENCE);
-    sentence1.add(new TextComposite(ComponentType.LEXEME) {{
-      add(new TextLeaf("One", ComponentType.WORD));
-    }});
+    TextComponent paragraph = createComposite(ComponentType.PARAGRAPH, sentence3, sentence1, sentence2);
+    TextComponent text = createComposite(ComponentType.TEXT, paragraph);
 
-    TextComposite sentence2 = new TextComposite(ComponentType.SENTENCE);
-    sentence2.add(new TextComposite(ComponentType.LEXEME) {{
-      add(new TextLeaf("Two", ComponentType.WORD));
-    }});
-    sentence2.add(new TextComposite(ComponentType.LEXEME) {{
-      add(new TextLeaf("words", ComponentType.WORD));
-    }});
-
-    TextComposite sentence3 = new TextComposite(ComponentType.SENTENCE);
-    sentence3.add(new TextComposite(ComponentType.LEXEME) {{
-      add(new TextLeaf("Three", ComponentType.WORD));
-    }});
-    sentence3.add(new TextComposite(ComponentType.LEXEME) {{
-      add(new TextLeaf("lexemes", ComponentType.WORD));
-    }});
-    sentence3.add(new TextComposite(ComponentType.LEXEME) {{
-      add(new TextLeaf("here", ComponentType.WORD));
-    }});
-
-    paragraph.add(sentence3);
-    paragraph.add(sentence1);
-    paragraph.add(sentence2);
-    text.add(paragraph);
+    List<String> expected = List.of("One", "Two words", "Three lexemes here");
 
     // when
     List<String> actual = service.sortSentencesByLexemeCount(text);
 
     // then
-    List<String> expected = List.of("One", "Two words", "Three lexemes here");
     assertEquals(expected, actual);
   }
 
   @Test
   public void testSwapFirstAndLastLexeme() {
     // given
-    TextComposite text = new TextComposite(ComponentType.TEXT);
-    TextComposite paragraph = new TextComposite(ComponentType.PARAGRAPH);
-    TextComposite sentence = new TextComposite(ComponentType.SENTENCE);
-
-    TextComposite lexeme1 = new TextComposite(ComponentType.LEXEME);
-    lexeme1.add(new TextLeaf("First;", ComponentType.WORD));
-
-    TextComposite lexeme2 = new TextComposite(ComponentType.LEXEME);
-    lexeme2.add(new TextLeaf("middle", ComponentType.WORD));
-
-    TextComposite lexeme3 = new TextComposite(ComponentType.LEXEME);
-    lexeme3.add(new TextLeaf("Last", ComponentType.WORD));
-
-    sentence.add(lexeme1);
-    sentence.add(lexeme2);
-    sentence.add(lexeme3);
-
-    paragraph.add(sentence);
-    text.add(paragraph);
+    TextComponent sentence = createSentence("First;", "middle", "Last");
+    TextComponent paragraph = createComposite(ComponentType.PARAGRAPH, sentence);
+    TextComponent text = createComposite(ComponentType.TEXT, paragraph);
 
     // when
     TextComponent result = service.swapFirstAndLastLexeme(text);
@@ -140,5 +79,27 @@ public class TextServiceImplTest {
             () -> assertEquals(expectedSecond, actualSecond),
             () -> assertEquals(expectedThird, actualThird)
     );
+  }
+
+  private TextComponent createLexeme(String word) {
+    TextComposite lexeme = new TextComposite(ComponentType.LEXEME);
+    lexeme.add(new TextLeaf(word, ComponentType.WORD));
+    return lexeme;
+  }
+
+  private TextComponent createSentence(String... words) {
+    TextComposite sentence = new TextComposite(ComponentType.SENTENCE);
+    for (String word : words) {
+      sentence.add(createLexeme(word));
+    }
+    return sentence;
+  }
+
+  private TextComponent createComposite(ComponentType type, TextComponent... children) {
+    TextComposite composite = new TextComposite(type);
+    for (TextComponent child : children) {
+      composite.add(child);
+    }
+    return composite;
   }
 }

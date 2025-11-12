@@ -8,18 +8,14 @@ public class LexemeParser extends AbstractTextParser {
 
     private static final String LEXEME_DELIMITER_REGEX = "\\s+";
 
-    public LexemeParser(AbstractTextParser next) {
-        this.next = next;
-    }
-
     @Override
     public TextComponent parse(String data) {
         TextComposite sentenceComposite = new TextComposite(ComponentType.SENTENCE);
-        String[] lexemes = data.trim().split(LEXEME_DELIMITER_REGEX);
+        String[] lexemes = data.strip().split(LEXEME_DELIMITER_REGEX);
 
         for (String lexeme : lexemes) {
             if (!lexeme.isBlank()) {
-                sentenceComposite.add(next.parse(lexeme));
+                sentenceComposite.add(getNext().parse(lexeme));
             }
         }
         return sentenceComposite;

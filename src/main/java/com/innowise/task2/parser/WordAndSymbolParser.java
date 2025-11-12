@@ -12,10 +12,6 @@ public class WordAndSymbolParser extends AbstractTextParser {
     private static final Pattern WORD_PATTERN = Pattern.compile("[\\w]+");
     private static final String SPLIT_REGEX = "(?<=\\W)|(?=\\W)";
 
-    public WordAndSymbolParser() {
-        this.next = null;
-    }
-
     @Override
     public TextComponent parse(String data) {
         TextComponent lexemeComposite = new TextComposite(ComponentType.LEXEME);

@@ -2,6 +2,8 @@ package com.innowise.task2.entity.impl;
 
 import com.innowise.task2.entity.ComponentType;
 import com.innowise.task2.entity.TextComponent;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,6 +12,8 @@ import java.util.List;
 public class TextComposite implements TextComponent {
     private List<TextComponent> children = new ArrayList<>();
     private ComponentType type;
+
+    private static final Logger logger = LogManager.getLogger(TextComposite.class);
 
     public TextComposite(ComponentType type) {
         this.type = type;
@@ -33,14 +37,15 @@ public class TextComposite implements TextComponent {
 
             switch (component.getType()) {
                 case PARAGRAPH -> builder.append("\n");
-                case SENTENCE -> builder.append(" ");
-                case LEXEME -> builder.append(" ");
+                case SENTENCE, LEXEME -> builder.append(" ");
                 default -> {
                 }
             }
         }
 
-        return builder.toString().stripTrailing();
+        String result = builder.toString().stripTrailing();
+        logger.debug("Restored text for {}: '{}'", type, result);
+        return result;
     }
 
 
