@@ -28,43 +28,37 @@ public class TextComposite implements TextComponent {
   public List<TextComponent> getChildren() { return new ArrayList<>(children); }
 
   @Override
-  public String restore() {
+  public String toString() {
     StringBuilder builder = new StringBuilder();
 
     for (int i = 0; i < children.size(); i++) {
       TextComponent current = children.get(i);
 
-      if(current.getType() == ComponentType.PARAGRAPH && i == 0){
+      if (current.getType() == ComponentType.PARAGRAPH && i == 0) {
         builder.append("\t");
       }
 
-      builder.append(current.restore());
+      builder.append(current);
 
-      switch (current.getType()) {
-        case PARAGRAPH -> {
-          boolean isLast = i == children.size() - 1;
-          if (!isLast) {
-            builder.append("\n\t");
-          }
-        }
-        case SENTENCE -> {
-          boolean isLast = i == children.size() - 1;
-          if (!isLast) {
-            builder.append(" ");
-          }
-        }
-        case WORD, SYMBOL -> {
-          if (i < children.size() - 1) {
-            TextComponent next = children.get(i + 1);
-            if (next.getType() == ComponentType.WORD) {
-              builder.append(" ");
-            }
-          }
-        }
-      }
+      appendDelimiter(builder, current, i);
     }
 
     return builder.toString();
+  }
+
+  private void appendDelimiter(StringBuilder builder, TextComponent current, int index) {
+    if (index == children.size() - 1) return;
+
+    switch (current.getType()) {
+      case PARAGRAPH -> builder.append("\n\t");
+      case SENTENCE -> builder.append(" ");
+      case WORD, SYMBOL -> {
+        TextComponent next = children.get(index + 1);
+        if (next.getType() == ComponentType.WORD) {
+          builder.append(" ");
+        }
+      }
+    }
   }
 
   @Override

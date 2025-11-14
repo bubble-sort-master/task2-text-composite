@@ -17,7 +17,7 @@ public class TextParserTest {
     String expected = "\tHello, world!\n\tThis is a test.";
 
     TextComponent actualParsed = parserChain.parse(input);
-    String actualRestored = actualParsed.restore();
+    String actualRestored = actualParsed.toString();
 
     assertEquals(expected, actualRestored);
   }
@@ -29,7 +29,7 @@ public class TextParserTest {
     String expected = "\tHello, world!\n\tAnother line.";
 
     TextComponent actualParsed = parserChain.parse(input);
-    String actualRestored = actualParsed.restore();
+    String actualRestored = actualParsed.toString();
 
     assertEquals(expected, actualRestored);
   }
@@ -41,7 +41,7 @@ public class TextParserTest {
     String expected = "\tWow! Really? Yes.";
 
     TextComponent actualParsed = parserChain.parse(input);
-    String actualRestored = actualParsed.restore();
+    String actualRestored = actualParsed.toString();
 
     assertEquals(expected, actualRestored);
   }

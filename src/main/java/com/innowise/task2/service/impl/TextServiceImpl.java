@@ -25,7 +25,8 @@ public class TextServiceImpl implements TextService {
       for (TextComponent sentence : paragraph.getChildren()) {
         Set<String> wordsInSentence = sentence.getChildren().stream()
                 .filter(component -> component.getType() == ComponentType.WORD)
-                .map(component -> component.restore().toLowerCase())
+                .map(TextComponent::toString)
+                .map(String::toLowerCase)
                 .collect(Collectors.toSet());
 
         for (String word : wordsInSentence) {
@@ -48,8 +49,8 @@ public class TextServiceImpl implements TextService {
   }
 
   @Override
-  public List<String> sortSentencesByLexemeCount(TextComponent text) {
-    logger.debug("Starting sentence sorting by lexeme count");
+  public List<String> sortSentencesByWordCount(TextComponent text) {
+    logger.debug("Starting sentence sorting by word count");
 
     List<TextComponent> sentences = new ArrayList<>();
 
@@ -58,8 +59,11 @@ public class TextServiceImpl implements TextService {
     }
 
     List<String> sorted = sentences.stream()
-            .sorted(Comparator.comparingInt(s -> s.getChildren().size()))
-            .map(TextComponent::restore)
+            .sorted(Comparator.comparingInt(s ->
+                    (int) s.getChildren().stream()
+                            .filter(c -> c.getType() == ComponentType.WORD)
+                            .count()))
+            .map(TextComponent::toString)
             .collect(Collectors.toList());
 
     logger.debug("Sorted sentences: {}", sorted);
@@ -67,8 +71,8 @@ public class TextServiceImpl implements TextService {
   }
 
   @Override
-  public TextComponent swapFirstAndLastLexeme(TextComponent text) {
-    logger.debug("Starting lexeme swap in each sentence");
+  public TextComponent swapFirstAndLastWord(TextComponent text) {
+    logger.debug("Starting word swap in each sentence");
 
     TextComposite newText = new TextComposite(ComponentType.TEXT);
 
@@ -76,18 +80,34 @@ public class TextServiceImpl implements TextService {
       TextComposite newParagraph = new TextComposite(ComponentType.PARAGRAPH);
 
       for (TextComponent sentence : paragraph.getChildren()) {
-        List<TextComponent> lexemes = sentence.getChildren();
+        List<TextComponent> components = sentence.getChildren();
+        List<Integer> wordIndices = new ArrayList<>();
+
+        for (int i = 0; i < components.size(); i++) {
+          if (components.get(i).getType() == ComponentType.WORD) {
+            wordIndices.add(i);
+          }
+        }
+
         TextComposite newSentence = new TextComposite(ComponentType.SENTENCE);
 
-        if (lexemes.size() >= 2) {
-          logger.trace("Swapping first and last lexeme in sentence: '{}'", sentence.restore());
-          newSentence.add(lexemes.get(lexemes.size() - 1));
-          for (int i = 1; i < lexemes.size() - 1; i++) {
-            newSentence.add(lexemes.get(i));
+        if (wordIndices.size() >= 2) {
+          int first = wordIndices.get(0);
+          int last = wordIndices.get(wordIndices.size() - 1);
+
+          logger.trace("Swapping first and last word in sentence: '{}'", sentence.toString());
+
+          for (int i = 0; i < components.size(); i++) {
+            if (i == first) {
+              newSentence.add(components.get(last));
+            } else if (i == last) {
+              newSentence.add(components.get(first));
+            } else {
+              newSentence.add(components.get(i));
+            }
           }
-          newSentence.add(lexemes.get(0));
         } else {
-          lexemes.forEach(newSentence::add);
+          components.forEach(newSentence::add);
         }
 
         newParagraph.add(newSentence);
@@ -96,7 +116,7 @@ public class TextServiceImpl implements TextService {
       newText.add(newParagraph);
     }
 
-    logger.debug("Lexeme swap completed");
+    logger.debug("Word swap completed");
     return newText;
   }
 }

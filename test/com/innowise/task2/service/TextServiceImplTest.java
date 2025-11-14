@@ -40,27 +40,27 @@ public class TextServiceImplTest {
     TextComponent text = createComposite(ComponentType.TEXT, paragraph);
 
     List<String> expected = List.of("One", "Two words", "Three lexemes here");
-    List<String> actual = service.sortSentencesByLexemeCount(text);
+    List<String> actual = service.sortSentencesByWordCount(text);
 
     assertEquals(expected, actual);
   }
 
   @Test
   public void testSwapFirstAndLastWord() {
-    TextComponent sentence = createSentence("First;", "middle", "Last");
+    TextComponent sentence = createSentence("First", "middle", "Last");
     TextComponent paragraph = createComposite(ComponentType.PARAGRAPH, sentence);
     TextComponent text = createComposite(ComponentType.TEXT, paragraph);
 
-    TextComponent result = service.swapFirstAndLastLexeme(text);
-    List<TextComponent> words = result.getChildren().get(0).getChildren().get(0).getChildren();
+    TextComponent result = service.swapFirstAndLastWord(text);
+    List<TextComponent> words = result.getChildren().getFirst().getChildren().getFirst().getChildren();
 
     String expectedFirst = "Last";
     String expectedSecond = "middle";
-    String expectedThird = "First;";
+    String expectedThird = "First";
 
-    String actualFirst = words.get(0).restore();
-    String actualSecond = words.get(1).restore();
-    String actualThird = words.get(2).restore();
+    String actualFirst = words.get(0).toString();
+    String actualSecond = words.get(1).toString();
+    String actualThird = words.get(2).toString();
 
     assertAll(
             () -> assertEquals(expectedFirst, actualFirst),

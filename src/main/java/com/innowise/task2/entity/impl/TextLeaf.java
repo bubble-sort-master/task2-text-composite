@@ -25,7 +25,7 @@ public class TextLeaf implements TextComponent {
   public List<TextComponent> getChildren() { return Collections.emptyList(); }
 
   @Override
-  public String restore() { return String.valueOf(value); }
+  public String toString() { return String.valueOf(value); }
 
   @Override
   public ComponentType getType() { return type; }
