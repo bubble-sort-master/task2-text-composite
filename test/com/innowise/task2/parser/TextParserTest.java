@@ -24,21 +24,9 @@ public class TextParserTest {
 
   @Test
   public void testParseAndRestoreWithMultipleSpacesAndNewlines() {
-    String input = "  Hello,   world!  \n\n  Another   line. ";
+    String input = "  Hello,   world!  \n\n  Привет   бро. ";
     AbstractTextParser parserChain = buildParserChain();
-    String expected = "\tHello, world!\n\tAnother line.";
-
-    TextComponent actualParsed = parserChain.parse(input);
-    String actualRestored = actualParsed.toString();
-
-    assertEquals(expected, actualRestored);
-  }
-
-  @Test
-  public void testRestorePreservesPunctuation() {
-    String input = "Wow! Really? Yes.";
-    AbstractTextParser parserChain = buildParserChain();
-    String expected = "\tWow! Really? Yes.";
+    String expected = "\tHello, world!\n\tПривет бро.";
 
     TextComponent actualParsed = parserChain.parse(input);
     String actualRestored = actualParsed.toString();

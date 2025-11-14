@@ -92,7 +92,7 @@ public class TextServiceImpl implements TextService {
         TextComposite newSentence = new TextComposite(ComponentType.SENTENCE);
 
         if (wordIndices.size() >= 2) {
-          int first = wordIndices.get(0);
+          int first = wordIndices.getFirst();
           int last = wordIndices.get(wordIndices.size() - 1);
 
           logger.trace("Swapping first and last word in sentence: '{}'", sentence.toString());

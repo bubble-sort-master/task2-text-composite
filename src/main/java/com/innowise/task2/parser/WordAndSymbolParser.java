@@ -13,11 +13,11 @@ public class WordAndSymbolParser extends AbstractTextParser {
 
   private static final Logger logger = LogManager.getLogger();
   private static final Pattern WORD_PATTERN = Pattern.compile("[\\p{L}]+");
-  private static final String SPLIT_REGEX = "(?<=\\W)|(?=\\W)";
+  private static final String SPLIT_REGEX = "(?<=\\p{Punct})|(?=\\p{Punct})|\\s+";
 
   @Override
   public TextComponent parse(String data) {
-    logger.debug("Starting word/symbol parsing for lexeme: '{}'", data);
+    logger.debug("Starting word/symbol parsing for sentence: '{}'", data);
 
     TextComponent sentenceComposite = new TextComposite(ComponentType.SENTENCE);
     String[] parts = data.split(SPLIT_REGEX);
@@ -37,7 +37,6 @@ public class WordAndSymbolParser extends AbstractTextParser {
         for (char ch : part.toCharArray()) {
           sentenceComposite.add(new TextLeaf(ch, ComponentType.SYMBOL));
         }
-
       }
     }
 
@@ -45,3 +44,4 @@ public class WordAndSymbolParser extends AbstractTextParser {
     return sentenceComposite;
   }
 }
+
