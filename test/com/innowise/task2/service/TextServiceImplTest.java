@@ -17,7 +17,6 @@ public class TextServiceImplTest {
 
   @Test
   public void testFindMaxSentencesContainingSameWord() {
-    // given
     TextComponent sentence1 = createSentence("Hello", "world");
     TextComponent sentence2 = createSentence("world", "privet");
     TextComponent sentence3 = createSentence("unique");
@@ -26,53 +25,42 @@ public class TextServiceImplTest {
     TextComponent text = createComposite(ComponentType.TEXT, paragraph);
 
     int expected = 2;
-
-    // when
     int actual = service.findMaxSentencesContainingSameWord(text);
 
-    // then
     assertEquals(expected, actual);
   }
 
   @Test
-  public void testSortSentencesByLexemeCount() {
-    // given
-    TextComponent sentence1 = createSentence("One");
+  public void testSortSentencesByWordCount() {
+    TextComponent sentence1 = createSentence("Three", "lexemes", "here");
     TextComponent sentence2 = createSentence("Two", "words");
-    TextComponent sentence3 = createSentence("Three", "lexemes", "here");
+    TextComponent sentence3 = createSentence("One");
 
     TextComponent paragraph = createComposite(ComponentType.PARAGRAPH, sentence3, sentence1, sentence2);
     TextComponent text = createComposite(ComponentType.TEXT, paragraph);
 
     List<String> expected = List.of("One", "Two words", "Three lexemes here");
-
-    // when
     List<String> actual = service.sortSentencesByLexemeCount(text);
 
-    // then
     assertEquals(expected, actual);
   }
 
   @Test
-  public void testSwapFirstAndLastLexeme() {
-    // given
+  public void testSwapFirstAndLastWord() {
     TextComponent sentence = createSentence("First;", "middle", "Last");
     TextComponent paragraph = createComposite(ComponentType.PARAGRAPH, sentence);
     TextComponent text = createComposite(ComponentType.TEXT, paragraph);
 
-    // when
     TextComponent result = service.swapFirstAndLastLexeme(text);
-
-    // then
-    List<TextComponent> lexemes = result.getChildren().get(0).getChildren().get(0).getChildren();
+    List<TextComponent> words = result.getChildren().get(0).getChildren().get(0).getChildren();
 
     String expectedFirst = "Last";
     String expectedSecond = "middle";
     String expectedThird = "First;";
 
-    String actualFirst = lexemes.get(0).restore();
-    String actualSecond = lexemes.get(1).restore();
-    String actualThird = lexemes.get(2).restore();
+    String actualFirst = words.get(0).restore();
+    String actualSecond = words.get(1).restore();
+    String actualThird = words.get(2).restore();
 
     assertAll(
             () -> assertEquals(expectedFirst, actualFirst),
@@ -81,16 +69,18 @@ public class TextServiceImplTest {
     );
   }
 
-  private TextComponent createLexeme(String word) {
-    TextComposite lexeme = new TextComposite(ComponentType.LEXEME);
-    lexeme.add(new TextLeaf(word, ComponentType.WORD));
-    return lexeme;
+  private TextComponent createWord(String word) {
+    TextComposite wordComposite = new TextComposite(ComponentType.WORD);
+    for (char ch : word.toCharArray()) {
+      wordComposite.add(new TextLeaf(String.valueOf(ch), ComponentType.LETTER));
+    }
+    return wordComposite;
   }
 
   private TextComponent createSentence(String... words) {
     TextComposite sentence = new TextComposite(ComponentType.SENTENCE);
     for (String word : words) {
-      sentence.add(createLexeme(word));
+      sentence.add(createWord(word));
     }
     return sentence;
   }

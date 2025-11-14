@@ -31,20 +31,25 @@ public class TextComposite implements TextComponent {
   public String restore() {
     StringBuilder builder = new StringBuilder();
 
-    for (TextComponent component : children) {
-      builder.append(component.restore());
+    for (int i = 0; i < children.size(); i++) {
+      TextComponent current = children.get(i);
+      builder.append(current.restore());
 
-      switch (component.getType()) {
+      switch (current.getType()) {
         case PARAGRAPH -> builder.append("\n");
-        case SENTENCE, LEXEME -> builder.append(" ");
-        default -> {
+        case SENTENCE -> builder.append(" ");
+        case WORD, SYMBOL -> {
+          if (i < children.size() - 1) {
+            TextComponent next = children.get(i + 1);
+            if (next.getType() == ComponentType.WORD) {
+              builder.append(" ");
+            }
+          }
         }
       }
     }
 
-    String result = builder.toString().stripTrailing();
-    logger.debug("Restored text for {}: '{}'", type, result);
-    return result;
+    return builder.toString().strip();
   }
 
   @Override

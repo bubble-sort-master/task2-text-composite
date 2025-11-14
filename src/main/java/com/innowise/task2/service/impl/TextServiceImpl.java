@@ -24,7 +24,6 @@ public class TextServiceImpl implements TextService {
     for (TextComponent paragraph : text.getChildren()) {
       for (TextComponent sentence : paragraph.getChildren()) {
         Set<String> wordsInSentence = sentence.getChildren().stream()
-                .flatMap(lexeme -> lexeme.getChildren().stream())
                 .filter(component -> component.getType() == ComponentType.WORD)
                 .map(component -> component.restore().toLowerCase())
                 .collect(Collectors.toSet());
