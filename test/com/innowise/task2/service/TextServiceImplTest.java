@@ -72,7 +72,7 @@ public class TextServiceImplTest {
   private TextComponent createWord(String word) {
     TextComposite wordComposite = new TextComposite(ComponentType.WORD);
     for (char ch : word.toCharArray()) {
-      wordComposite.add(new TextLeaf(String.valueOf(ch), ComponentType.LETTER));
+      wordComposite.add(new TextLeaf(ch, ComponentType.LETTER));
     }
     return wordComposite;
   }

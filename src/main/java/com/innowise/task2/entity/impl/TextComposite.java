@@ -33,11 +33,26 @@ public class TextComposite implements TextComponent {
 
     for (int i = 0; i < children.size(); i++) {
       TextComponent current = children.get(i);
+
+      if(current.getType() == ComponentType.PARAGRAPH && i == 0){
+        builder.append("\t");
+      }
+
       builder.append(current.restore());
 
       switch (current.getType()) {
-        case PARAGRAPH -> builder.append("\n");
-        case SENTENCE -> builder.append(" ");
+        case PARAGRAPH -> {
+          boolean isLast = i == children.size() - 1;
+          if (!isLast) {
+            builder.append("\n\t");
+          }
+        }
+        case SENTENCE -> {
+          boolean isLast = i == children.size() - 1;
+          if (!isLast) {
+            builder.append(" ");
+          }
+        }
         case WORD, SYMBOL -> {
           if (i < children.size() - 1) {
             TextComponent next = children.get(i + 1);
@@ -49,7 +64,7 @@ public class TextComposite implements TextComponent {
       }
     }
 
-    return builder.toString().strip();
+    return builder.toString();
   }
 
   @Override

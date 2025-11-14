@@ -7,55 +7,55 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TextParserTest {
 
-    @Test
-    public void testParseAndRestoreSimpleText() {
-        String input = """
+  @Test
+  public void testParseAndRestoreSimpleText() {
+    String input = """
                 Hello, world!
                 This is a test.
                 """;
-        AbstractTextParser parserChain = buildParserChain();
-        String expected = "Hello, world!\nThis is a test.";
+    AbstractTextParser parserChain = buildParserChain();
+    String expected = "\tHello, world!\n\tThis is a test.";
 
-        TextComponent actualParsed = parserChain.parse(input);
-        String actualRestored = actualParsed.restore();
+    TextComponent actualParsed = parserChain.parse(input);
+    String actualRestored = actualParsed.restore();
 
-        assertEquals(expected, actualRestored);
-    }
+    assertEquals(expected, actualRestored);
+  }
 
-    @Test
-    public void testParseAndRestoreWithMultipleSpacesAndNewlines() {
-        String input = "  Hello,   world!  \n\n  Another   line. ";
-        AbstractTextParser parserChain = buildParserChain();
-        String expected = "Hello, world!\nAnother line.";
+  @Test
+  public void testParseAndRestoreWithMultipleSpacesAndNewlines() {
+    String input = "  Hello,   world!  \n\n  Another   line. ";
+    AbstractTextParser parserChain = buildParserChain();
+    String expected = "\tHello, world!\n\tAnother line.";
 
-        TextComponent actualParsed = parserChain.parse(input);
-        String actualRestored = actualParsed.restore();
+    TextComponent actualParsed = parserChain.parse(input);
+    String actualRestored = actualParsed.restore();
 
-        assertEquals(expected, actualRestored);
-    }
+    assertEquals(expected, actualRestored);
+  }
 
-    @Test
-    public void testRestorePreservesPunctuation() {
-        String input = "Wow! Really? Yes.";
-        AbstractTextParser parserChain = buildParserChain();
-        String expected = "Wow! Really? Yes.";
+  @Test
+  public void testRestorePreservesPunctuation() {
+    String input = "Wow! Really? Yes.";
+    AbstractTextParser parserChain = buildParserChain();
+    String expected = "\tWow! Really? Yes.";
 
-        TextComponent actualParsed = parserChain.parse(input);
-        String actualRestored = actualParsed.restore();
+    TextComponent actualParsed = parserChain.parse(input);
+    String actualRestored = actualParsed.restore();
 
-        assertEquals(expected, actualRestored);
-    }
+    assertEquals(expected, actualRestored);
+  }
 
-    private AbstractTextParser buildParserChain() {
-        ParagraphParser paragraphParser = new ParagraphParser();
-        SentenceParser sentenceParser = new SentenceParser();
-        WordAndSymbolParser wordAndSymbolParser = new WordAndSymbolParser();
-        LetterParser letterParser = new LetterParser();
+  private AbstractTextParser buildParserChain() {
+    ParagraphParser paragraphParser = new ParagraphParser();
+    SentenceParser sentenceParser = new SentenceParser();
+    WordAndSymbolParser wordAndSymbolParser = new WordAndSymbolParser();
+    LetterParser letterParser = new LetterParser();
 
-        paragraphParser.setNext(sentenceParser);
-        sentenceParser.setNext(wordAndSymbolParser);
-        wordAndSymbolParser.setNext(letterParser);
+    paragraphParser.setNext(sentenceParser);
+    sentenceParser.setNext(wordAndSymbolParser);
+    wordAndSymbolParser.setNext(letterParser);
 
-        return paragraphParser;
-    }
+    return paragraphParser;
+  }
 }
